@@ -826,6 +826,8 @@ AC_ARG_WITH([gettext],
 LDFLAGS_SAVE="$LDFLAGS"
 CFLAGS_SAVE="$CFLAGS"
 
+AM_GNU_GETTEXT_VERSION([0.18.1])
+
 if test "x$GETTEXT_PATH" != "xno"; then
 	dnl If user has specified a custom gettext installation path, use it.
 	if test "x$GETTEXT_PATH" != "xyes"; then
