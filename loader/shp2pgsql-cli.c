@@ -13,7 +13,7 @@
  **********************************************************************/
 
 #include "../postgis_config.h"
-
+#include "../postgis_svn_revision.h"
 #include "shp2pgsql-core.h"
 #include "../liblwgeom/liblwgeom.h" /* for SRID_UNKNOWN */
 
