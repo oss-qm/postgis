@@ -29,6 +29,7 @@
 #include "gdal_vrt.h"
 #include "ogr_srs_api.h"
 #include <assert.h>
+#include "../../postgis_svn_revision.h"
 
 static void
 loader_rt_error_handler(const char *fmt, va_list ap) {
