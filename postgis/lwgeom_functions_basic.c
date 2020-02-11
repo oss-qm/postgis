@@ -31,6 +31,7 @@
 #include "utils/geo_decls.h"
 
 #include "../postgis_config.h"
+#include "../postgis_svn_revision.h"
 #include "liblwgeom.h"
 #include "lwgeom_pg.h"
 
