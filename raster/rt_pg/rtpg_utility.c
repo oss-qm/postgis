@@ -32,6 +32,7 @@
 #include <utils/builtins.h>
 
 #include "../../postgis_config.h"
+#include "../../postgis_svn_revision.h"
 #include "lwgeom_pg.h"
 
 #include "rtpostgis.h"
