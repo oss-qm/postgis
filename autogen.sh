@@ -52,6 +52,18 @@ if [ ! ${ACLOCAL} ]; then
 fi
 ACLOCAL_VER=`${ACLOCAL} --version | ${GREP} -E "^.*[0-9]$" | ${SED} 's/^.* //'`
 
+for autoheader in autoheader autoheader-1.9 autoheader-1.9; do
+    AUTOHEADER=`which $autoheader 2>/dev/null`
+    if test -x "${AUTOHEADER}"; then
+        break;
+    fi
+done
+if [ ! ${AUTOHEADER} ]; then
+    echo "Missing autoheader!"
+    exit 1
+fi
+AUTOHEADER_VER=`${AUTOHEADER} --version | ${GREP} -E "^.*[0-9]$" | ${SED} 's/^.* //'`
+
 for libtoolize in glibtoolize libtoolize; do
     LIBTOOLIZE=`which $libtoolize 2>/dev/null`
     if test -x "${LIBTOOLIZE}"; then
@@ -77,6 +89,9 @@ ${LIBTOOLIZE} ${LTOPTS} || giveup
 
 echo "* Running $ACLOCAL (${ACLOCAL_VER})"
 ${ACLOCAL} -I macros || giveup
+
+echo "* Running ${AUTOHEADER} (${AUTOHEADER_VER})"
+${AUTOHEADER}
 
 echo "* Running ${AUTOCONF} (${AUTOCONF_VER})"
 ${AUTOCONF} || giveup
