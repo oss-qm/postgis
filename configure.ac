@@ -161,8 +161,8 @@ AC_DEFINE_UNQUOTED([HAVE_TERMIOS_H], [$HAVE_TERMIOS_H], [termios.h header])
 dnl
 dnl Check for platform-specific functions
 dnl
-AC_CHECK_FUNC(vasprintf, AC_DEFINE([HAVE_VASPRINTF]))
-AC_CHECK_FUNC(asprintf, AC_DEFINE([HAVE_ASPRINTF]))
+AC_CHECK_FUNC(vasprintf, AC_DEFINE([HAVE_VASPRINTF], [], [Have vasprintf() function]))
+AC_CHECK_FUNC(asprintf, AC_DEFINE([HAVE_ASPRINTF], [], [Have asprintf() function]))
 AC_FUNC_FSEEKO()
 
 dnl
