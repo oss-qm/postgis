@@ -108,6 +108,27 @@ AC_SUBST([POSTGIS_MAJOR_VERSION])
 AC_SUBST([POSTGIS_MINOR_VERSION])
 AC_SUBST([POSTGIS_MICRO_VERSION])
 
+AC_ARG_ENABLE([debug],
+    [AS_HELP_STRING([--enable-debug=<level-nr>],
+                    [Enable extra debug code])],
+    [
+        case "$enableval" in
+            "yes")
+                POSTGIS_DEBUG_LEVEL=1
+            ;;
+            "no")
+                POSTGIS_DEBUG_LEVEL=0
+            ;;
+            *)
+                POSTGIS_DEBUG_LEVEL="$enableval"
+            ;;
+        esac
+    ],
+    [POSTGIS_DEBUG_LEVEL=0]
+)
+
+AC_DEFINE_UNQUOTED([POSTGIS_DEBUG_LEVEL], [$POSTGIS_DEBUG_LEVEL], [Debug level])
+
 dnl =====================================================
 dnl Include minor version in postgis extension libraries
 dnl =====================================================
