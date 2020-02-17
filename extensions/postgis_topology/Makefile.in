@@ -59,6 +59,9 @@ sql/$(EXTENSION).sql: extlock.sql sql_bits/topology.sql  sql_bits/mark_editable_
 	mkdir -p sql
 	cat $^ > $@
 
+../../topology/topology.sql:
+	$(MAKE) -C ../../topology topology.sql
+
 #strip BEGIN/COMMIT since these are not allowed in extensions
 #strip CREATE SCHEMA since we force extension
 # to create schema by setting schema to topology in control
