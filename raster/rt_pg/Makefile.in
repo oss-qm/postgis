@@ -125,6 +125,9 @@ endif
 ../../libpgcommon/libpgcommon.a:
 	$(MAKE) -C ../../libpgcommon
 
+../../postgis_svn_revision.h:
+	$(MAKE) -C ../.. postgis_svn_revision.h
+
 # Objects dependencies
 # NOTE: the .a deps are really only link-time dependencies, but at this
 #       time I dunno how to wncode those
