@@ -110,7 +110,7 @@ endif
 all: $(BUILD_TARGET)
 
 XML_SOURCES = \
-    extras_address_standardizer.xml \
+	extras_address_standardizer.xml \
 	extras_historytable.xml \
 	extras_tigergeocoder.xml \
 	extras_topology.xml \
