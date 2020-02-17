@@ -62,6 +62,9 @@ sql/$(EXTENSION).sql: extlock.sql sql_bits/topology.sql  sql_bits/mark_editable_
 ../../topology/topology.sql:
 	$(MAKE) -C ../../topology topology.sql
 
+../../topology/topology_upgrade.sql:
+	$(MAKE) -C ../../topology topology_upgrade.sql
+
 #strip BEGIN/COMMIT since these are not allowed in extensions
 #strip CREATE SCHEMA since we force extension
 # to create schema by setting schema to topology in control
