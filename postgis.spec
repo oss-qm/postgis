@@ -86,14 +86,6 @@ systems (GIS), much like ESRI's SDE or Oracle's Spatial extension. PostGIS
 follows the OpenGIS "Simple Features Specification for SQL" and has been
 certified as compliant with the "Types and Functions" profile.
 
-%package %pkg_client
-Summary:	Client tools and their libraries of PostGIS
-%requires_main
-
-%description %{pg_version_major}-client
-The postgis-client package contains the client tools and their libraries
-of PostGIS.
-
 %package %pkg_docs
 Summary:	Extra documentation for PostGIS
 
@@ -195,12 +187,24 @@ fi
 %clean
 %__rm -rf %buildroot
 
-%files -f rpmbuild/postgis.files
+### main package
+
+%files %pkg_main -f rpmbuild/postgis.files
 %defattr(-,root,root)
 %doc COPYING CREDITS NEWS TODO README.postgis
 %license LICENSE.TXT
 
-%files %{pg_version_major}-client -f rpmbuild/postgis-client.files
+### Client package
+
+%package %pkg_client
+Summary:	Client tools and their libraries of PostGIS
+%requires_main
+
+%description %pkg_client
+The postgis-client package contains the client tools and their libraries
+of PostGIS.
+
+%files %pkg_client -f rpmbuild/postgis-client.files
 
 %files %pkg_docs
 %defattr(-,root,root)
@@ -211,6 +215,7 @@ fi
 %defattr(-,root,root)
 %doc utils/README
 
+### global changelog
 %changelog
 * Mon Feb 17 2020 Enrio Weigelt, metux IT consult <info@metux.net> - 3.0.1-1
 - Packaged version 3.0.1 for SLES
