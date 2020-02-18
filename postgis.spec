@@ -65,7 +65,8 @@ systems (GIS), much like ESRI's SDE or Oracle's Spatial extension. PostGIS
 follows the OpenGIS "Simple Features Specification for SQL" and has been
 certified as compliant with the "Types and Functions" profile.
 
-%package %pg_main
+%package %pkg_main
+Summary:	Geographic Information Systems Extensions to PostgreSQL
 Requires:	postgresql%pg_version_major
 Requires:	geos >= 3.8.0
 Requires:	postgresql%pg_version_major-contrib
