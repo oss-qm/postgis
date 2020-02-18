@@ -1,11 +1,8 @@
 # build config
 %global enable_sfcgal		1
-%global enable_utils		1
+%global enable_gui		0
 
 %global pg_version_major	12
-%global pgis_version_major	3.0
-%global pgis_version_so		3
-%global pgis_version_prev	2.5
 
 %global pkg_version		%version-%release
 %global requires_main		Requires:	%name%{?_isa} = %pkg_version
@@ -18,15 +15,9 @@
 %global pg_alternative_prio	%{pg_version_major}0
 %global pg_prefix		/usr/postgresql-%pg_version_major
 
-%global pgis_datadir		%_datadir/%name
-
-%global shp2pgsqlgui		0
-
-%global _smp_mflags		-j1
-
 Summary:	Geographic Information Systems Extensions to PostgreSQL
 Name:		postgis
-Version:	%pgis_version_major.1
+Version:	3.0.1
 Release:	1%{?dist}
 License:	GPLv2+
 Source0:	postgis-%version.tar.gz
@@ -54,7 +45,6 @@ Requires:	geos >= 3.8.0
 Requires:	postgresql%pg_version_major-contrib
 Requires:	proj
 Requires:	xerces-c
-#Requires:	hdf5
 
 Requires:	pcre
 Requires:	libjson-c2
@@ -69,22 +59,13 @@ systems (GIS), much like ESRI's SDE or Oracle's Spatial extension. PostGIS
 follows the OpenGIS "Simple Features Specification for SQL" and has been
 certified as compliant with the "Types and Functions" profile.
 
-%package client
+%package %{pg_version_major}-client
 Summary:	Client tools and their libraries of PostGIS
 %requires_main
 
-%description client
+%description %{pg_version_major}-client
 The postgis-client package contains the client tools and their libraries
 of PostGIS.
-
-%package devel
-Summary:	Development headers and libraries for PostGIS
-Requires:	postgis%{?_isa} = %pkg_version
-
-%description devel
-The postgis-devel package contains the header files and libraries
-needed to compile C or C++ applications which will directly interact
-with PostGIS.
 
 %package docs
 Summary:	Extra documentation for PostGIS
@@ -92,16 +73,17 @@ Summary:	Extra documentation for PostGIS
 %description docs
 The postgis-docs package includes PDF documentation of PostGIS.
 
-%if %shp2pgsqlgui
+%if %enable_gui
 %package	gui
 Summary:	GUI for PostGIS
 Requires:	postgis%{?_isa} = %pkg_version
 
 %description	gui
 The postgis-gui package provides a gui for PostGIS.
+
+%files gui -f rpmbuild/postgis-gui.files
 %endif
 
-%if %enable_utils
 %package utils
 Summary:	The utils for PostGIS
 Requires:	perl-DBD-Pg
@@ -109,9 +91,6 @@ Requires:	perl-DBD-Pg
 
 %description utils
 The postgis-utils package provides the utilities for PostGIS.
-%endif
-
-#%global __perl_requires %{SOURCE4}
 
 %prep
 %setup -q -n postgis-%version
@@ -121,7 +100,7 @@ The postgis-utils package provides the utilities for PostGIS.
 %configure \
 	--without-raster \
 	%{?enable_sfcgal:--with-sfcgal=%cmd_sfcgal_config} \
-	%{?shp2pgsqlgui:--with-gui} \
+	%{?enable_gui:--with-gui} \
 	--with-pgconfig=%cmd_pg_config \
 	--enable-rpath \
 	--libdir=`%cmd_pg_config --pkglibdir` \
@@ -145,7 +124,6 @@ touch rpmbuild/postgis-utils.files
 mkdir -p %buildroot/$SHAREDIR
 ( cd utils && find -name "*.pl" )
 for i in `cd utils && find -name "*.pl"` ; do
-    echo "=== utils: $i"
     %__install -m 644 utils/$i %buildroot/$SHAREDIR
     echo "$SHAREDIR/$i" >> rpmbuild/postgis-utils.files
 done
@@ -156,7 +134,7 @@ done
     find * -path "*/contrib/*/*.sql"           -exec "echo" "%attr(-,root,root)"   "/{}" ";" ; \
     find * -path "*/contrib/*/*.pl"            -exec "echo" "%attr(755,root,root)" "/{}" ";" ; \
     find * -path "*.so"                        -exec "echo" "%attr(755,root,root)" "/{}" ";" ; \
-    find * -name "README.address_standardizer" -exec "echo" "%attr(-,root,root)"   "/{}" ";" ; \
+    find * -name "README.address_standardizer" -exec "echo" "%exclude "            "/{}" ";" ; \
 ) > rpmbuild/postgis.files
 
 ( cd %buildroot ; \
@@ -165,20 +143,7 @@ done
     done \
 ) > rpmbuild/postgis-client.files
 
-# Create alternatives entries for common binaries
-%post
-%cmd_update_alt --install %_bindir/pgsql2shp postgis-pgsql2shp `%cmd_pg_config --bindir`/pgsql2shp %pg_alternative_prio
-%cmd_update_alt --install %_bindir/shp2pgsql postgis-shp2pgsql `%cmd_pg_config --bindir`/shp2pgsql %pg_alternative_prio
-
-# Drop alternatives entries for common binaries and man files
-%postun
-if [ "$1" -eq 0 ]; then
-    # Only remove these links if the package is completely removed from the system (vs.just being upgraded)
-    %cmd_update_alt --remove postgis-pgsql2shp `%cmd_pg_config --bindir`/pgsql2shp
-    %cmd_update_alt --remove postgis-shp2pgsql `%cmd_pg_config --bindir`/shp2pgsql
-fi
-
-%if %shp2pgsqlgui
+%if %enable_gui
 ( cd %buildroot ; \
     for f in shp2pgsql-gui; do \
         find -name $f -exec "echo" "%attr(755,root,root)" "/{}" ";" ; \
@@ -189,33 +154,35 @@ fi
 ) > rpmbuild/postgis-gui.files
 %endif
 
+%post utils
+%cmd_update_alt --install %_bindir/pgsql2shp postgis-pgsql2shp `%cmd_pg_config --bindir`/pgsql2shp %pg_alternative_prio
+%cmd_update_alt --install %_bindir/shp2pgsql postgis-shp2pgsql `%cmd_pg_config --bindir`/shp2pgsql %pg_alternative_prio
+
+%postun utils
+if [ "$1" -eq 0 ]; then
+    # Only remove these links if the package is completely removed from the system (vs.just being upgraded)
+    %cmd_update_alt --remove postgis-pgsql2shp `%cmd_pg_config --bindir`/pgsql2shp
+    %cmd_update_alt --remove postgis-shp2pgsql `%cmd_pg_config --bindir`/shp2pgsql
+fi
+
 %clean
 %__rm -rf %buildroot
 
 %files -f rpmbuild/postgis.files
 %defattr(-,root,root)
-%doc COPYING CREDITS NEWS TODO README.postgis doc/html loader/README.* doc/postgis.xml doc/ZMSgeoms.txt
-%doc extensions/address_standardizer/README.address_standardizer
+%doc COPYING CREDITS NEWS TODO README.postgis
 %license LICENSE.TXT
 
-%files client -f rpmbuild/postgis-client.files
-
-%files devel
-%defattr(644,root,root)
+%files %{pg_version_major}-client -f rpmbuild/postgis-client.files
 
 %files docs
 %defattr(-,root,root)
-#%dnl %doc postgis-%version.pdf
+%doc doc/html doc/postgis.xml doc/ZMSgeoms.txt loader/README.*
+%doc extensions/address_standardizer/README.address_standardizer
 
-%if %shp2pgsqlgui
-%files gui -f rpmbuild/postgis-gui.files
-%endif
-
-%if %enable_utils
 %files utils -f rpmbuild/postgis-utils.files
 %defattr(-,root,root)
 %doc utils/README
-%endif
 
 %changelog
 * Mon Feb 17 2020 Enrio Weigelt, metux IT consult <info@metux.net> - 3.0.1-1
