@@ -10,7 +10,7 @@
 %global cmd_update_alt		%_sbindir/update-alternatives
 %global cmd_pg_config		%_bindir/pg_config-%pg_version_major
 %global cmd_sfcgal_config	%_bindir/sfcgal-config
-%global cmd_make		%__make -j4 DESTDIR="%buildroot"
+%global cmd_make		%__make %{?_smp_mflags} DESTDIR="%buildroot"
 
 %global pg_alternative_prio	%{pg_version_major}0
 %global pg_prefix		/usr/postgresql-%pg_version_major
