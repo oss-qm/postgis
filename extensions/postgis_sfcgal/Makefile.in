@@ -77,6 +77,12 @@ sql_bits/sfcgal.sql: ../../postgis/sfcgal.sql
 ../../doc/sfcgal_comments.sql:
 	$(MAKE) -C ../../doc comments
 
+../../postgis/sfcgal.sql:
+	$(MAKE) -C ../../postgis sfcgal.sql
+
+../../postgis/sfcgal_upgrade.sql:
+	$(MAKE) -C ../../postgis sfcgal_upgrade.sql
+
 sql_bits/sfcgal_comments.sql: ../../doc/sfcgal_comments.sql
 	mkdir -p sql_bits
 	cp $< $@

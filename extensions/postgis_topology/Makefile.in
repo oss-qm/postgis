@@ -66,6 +66,12 @@ sql_bits/topology.sql: ../../topology/topology.sql
 ../../doc/topology_comments.sql:
 	$(MAKE) -C ../../doc comments
 
+../../topology/topology.sql:
+	$(MAKE) -C ../../topology topology.sql
+
+../../topology/topology_upgrade.sql:
+	$(MAKE) -C ../../topology topology_upgrade.sql
+
 sql_bits/topology_comments.sql: ../../doc/topology_comments.sql
 	cp $< $@
 

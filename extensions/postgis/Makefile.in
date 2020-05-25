@@ -97,6 +97,18 @@ sql:
 sql_bits:
 	mkdir -p $@
 
+../../postgis/postgis_upgrade_for_extension.sql:
+	$(MAKE) -C ../../postgis postgis_upgrade_for_extension.sql
+
+../../postgis/postgis_for_extension.sql:
+	$(MAKE) -C ../../postgis postgis_for_extension.sql
+
+../../raster/rt_pg/rtpostgis_upgrade_for_extension.sql:
+	$(MAKE) -C ../../raster/rt_pg rtpostgis_upgrade_for_extension.sql
+
+../../raster/rt_pg/rtpostgis_for_extension.sql:
+	$(MAKE) -C ../../raster/rt_pg rtpostgis_for_extension.sql
+
 #strip BEGIN/COMMIT since these are not allowed in extensions
 sql_bits/spatial_ref_sys.sql: ../../spatial_ref_sys.sql | sql_bits
 	$(PERL) -pe 's/BEGIN\;//g ; s/COMMIT\;//g' $< > $@
